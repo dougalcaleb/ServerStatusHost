@@ -7,11 +7,6 @@ import org.bukkit.command.CommandSender;
 public class CommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-//        if (!command.getName().equalsIgnoreCase("statushost")) {
-//            commandSender
-//            return false;
-//        }
-
         switch (args.length) {
             case 0:
                 commandSender.sendMessage("Plugin is active");

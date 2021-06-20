@@ -10,6 +10,8 @@ import java.io.IOException;
 
 public class Webhook {
 
+    static String WebhookURL;
+
     public static void playerJoin(Player player, Server server, String url) {
         if (!ServerStatusHost.checkURL(url)) {
             return;
@@ -56,11 +58,13 @@ public class Webhook {
             return;
         }
 
-        ServerStatusHost.plugin.getLogger().info("Passed URL check");
+        WebhookURL = url;
+
+//        ServerStatusHost.plugin.getLogger().info("Passed URL check");
 
         try {
             JSONObject obj = new JSONObject();
-            obj.put("content", "online");
+            obj.put("content", "SERVER_INIT_SUCCESS");
 
             OkHttpClient client = new OkHttpClient();
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
@@ -80,11 +84,31 @@ public class Webhook {
 
         try {
             JSONObject obj = new JSONObject();
-            obj.put("content", "offline");
+            obj.put("content", "SERVER_SHUTDOWN_PROCESS");
 
             OkHttpClient client = new OkHttpClient();
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
             Request req = new Request.Builder().url(url).post(body).build();
+
+            Response res = client.newCall(req).execute();
+        }
+        catch(IOException e) {
+            ServerStatusHost.logError(e);
+        }
+    }
+
+    public static void healthUpdate() {
+        if (!ServerStatusHost.checkURL(WebhookURL)) {
+            return;
+        }
+
+        try {
+            JSONObject obj = new JSONObject();
+            obj.put("content", "SERVER_HEALTH_REPORT:|"+String.join("|", DataHandler.getServerHealth().split("\\r?\\n")));
+
+            OkHttpClient client = new OkHttpClient();
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
+            Request req = new Request.Builder().url(WebhookURL).post(body).build();
 
             Response res = client.newCall(req).execute();
         }
