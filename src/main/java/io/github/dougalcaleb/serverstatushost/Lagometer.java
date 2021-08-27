@@ -1,5 +1,7 @@
 package io.github.dougalcaleb.serverstatushost;
 
+import java.text.DecimalFormat;
+
 public class Lagometer implements Runnable {
     public static int TICK_COUNT= 0;
     public static long[] TICKS= new long[600];
@@ -17,7 +19,11 @@ public class Lagometer implements Runnable {
         int target = (TICK_COUNT- 1 - ticks) % TICKS.length;
         long elapsed = System.currentTimeMillis() - TICKS[target];
 
-        return ticks / (elapsed / 1000.0D);
+        double result = (ticks / (elapsed / 1000.0D));
+
+        int tmp = (int)(result * 100.0);
+
+        return ((double)tmp)/100.0;
     }
 
     public static long getElapsed(int tickID)

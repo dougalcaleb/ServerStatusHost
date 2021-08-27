@@ -1,12 +1,14 @@
 package io.github.dougalcaleb.serverstatushost;
 
-import okhttp3.*;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-//import org.json.JSONObject;
-import org.json.simple.JSONObject;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 public class Webhook {
 
@@ -18,14 +20,19 @@ public class Webhook {
         }
 
         try {
-            JSONObject obj = new JSONObject();
-            obj.put("content", player.getName() + " joined. online: " + server.getOnlinePlayers().size());
+            byte[] out = ("{\"content\": \"PLAYER_JOIN|" + player.getName() + "\"}").getBytes(StandardCharsets.UTF_8);
 
-            OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
-            Request req = new Request.Builder().url(url).post(body).build();
-
-            Response res = client.newCall(req).execute();
+            URL botUrl = new URL(url);
+            URLConnection con = botUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection)con;
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+            http.setFixedLengthStreamingMode(out.length);
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.connect();
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
         }
         catch(IOException e) {
             ServerStatusHost.logError(e);
@@ -38,14 +45,19 @@ public class Webhook {
         }
 
         try {
-            JSONObject obj = new JSONObject();
-            obj.put("content", player.getName() + " left. online: " + (server.getOnlinePlayers().size()-1));
+            byte[] out = ("{\"content\":" + "\"PLAYER_LEAVE|" + player.getName() + "\"}").getBytes(StandardCharsets.UTF_8);
 
-            OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
-            Request req = new Request.Builder().url(url).post(body).build();
-
-            Response res = client.newCall(req).execute();
+            URL botUrl = new URL(url);
+            URLConnection con = botUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection)con;
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+            http.setFixedLengthStreamingMode(out.length);
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.connect();
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
         }
         catch(IOException e) {
             ServerStatusHost.logError(e);
@@ -53,24 +65,26 @@ public class Webhook {
     }
 
     public static void startup(String url) {
-        ServerStatusHost.plugin.getLogger().info("Webhook.Startup called");
         if (!(ServerStatusHost.checkURL(url))) {
             return;
         }
 
         WebhookURL = url;
 
-//        ServerStatusHost.plugin.getLogger().info("Passed URL check");
-
         try {
-            JSONObject obj = new JSONObject();
-            obj.put("content", "SERVER_INIT_SUCCESS");
+            byte[] out = ("{\"content\": \"SERVER_INIT\"}").getBytes(StandardCharsets.UTF_8);
 
-            OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
-            Request req = new Request.Builder().url(url).post(body).build();
-
-            Response res = client.newCall(req).execute();
+            URL botUrl = new URL(url);
+            URLConnection con = botUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection)con;
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+            http.setFixedLengthStreamingMode(out.length);
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.connect();
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
         }
         catch(IOException e) {
             ServerStatusHost.logError(e);
@@ -83,14 +97,19 @@ public class Webhook {
         }
 
         try {
-            JSONObject obj = new JSONObject();
-            obj.put("content", "SERVER_SHUTDOWN_PROCESS");
+            byte[] out = ("{\"content\": \"SERVER_SHUTDOWN\"}").getBytes(StandardCharsets.UTF_8);
 
-            OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
-            Request req = new Request.Builder().url(url).post(body).build();
-
-            Response res = client.newCall(req).execute();
+            URL botUrl = new URL(url);
+            URLConnection con = botUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection)con;
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+            http.setFixedLengthStreamingMode(out.length);
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.connect();
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
         }
         catch(IOException e) {
             ServerStatusHost.logError(e);
@@ -103,14 +122,19 @@ public class Webhook {
         }
 
         try {
-            JSONObject obj = new JSONObject();
-            obj.put("content", "SERVER_HEALTH_REPORT:|"+String.join("|", DataHandler.getServerHealth().split("\\r?\\n")));
+            byte[] out = ("{\"content\": \"SERVER_REPORT|" + String.join("|", DataHandler.getServerHealth().split("\\r?\\n")) + "\"}").getBytes(StandardCharsets.UTF_8);
 
-            OkHttpClient client = new OkHttpClient();
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), obj.toString());
-            Request req = new Request.Builder().url(WebhookURL).post(body).build();
-
-            Response res = client.newCall(req).execute();
+            URL botUrl = new URL(WebhookURL);
+            URLConnection con = botUrl.openConnection();
+            HttpURLConnection http = (HttpURLConnection)con;
+            http.setRequestMethod("POST");
+            http.setDoOutput(true);
+            http.setFixedLengthStreamingMode(out.length);
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            http.connect();
+            try(OutputStream os = http.getOutputStream()) {
+                os.write(out);
+            }
         }
         catch(IOException e) {
             ServerStatusHost.logError(e);

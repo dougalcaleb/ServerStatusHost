@@ -7,11 +7,14 @@ public class Config {
 
     public Config(FileConfiguration config) {
         this.config = config;
-        config.addDefault("webhookURL", "");
+        config.addDefault("url", "");
+        config.addDefault("reportInterval", 10);
         config.options().copyDefaults(true);
     }
 
     public String getURL() {
-        return config.getString("webhookURL");
+        return config.getString("url");
     }
+
+    public long getReportRate() { return config.getLong("reportInterval"); }
 }

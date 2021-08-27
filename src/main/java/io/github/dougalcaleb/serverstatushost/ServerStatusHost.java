@@ -3,13 +3,6 @@ package io.github.dougalcaleb.serverstatushost;
 import io.github.dougalcaleb.serverstatushost.loader.Config;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/* TODO:
-- Allow for "/statushost set x y"
- - Set health report rate
-- Enable or disable "/statushost [en|dis]able"
-
- */
-
 public class ServerStatusHost extends JavaPlugin {
 
     public static ServerStatusHost plugin;
@@ -39,7 +32,7 @@ public class ServerStatusHost extends JavaPlugin {
         this.getCommand("statushost").setExecutor(new CommandHandler());
 
         // Health posting
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, new RegularPost(), 200L, 200L);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, new RegularPost(), 200L, config.getReportRate() * 20);
     }
 
     @Override
